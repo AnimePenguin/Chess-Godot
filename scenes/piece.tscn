@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cn4ssc2iv7ibb"]
+
+[ext_resource type="Script" path="res://scripts/piece.gd" id="1_hf0oo"]
+
+[node name="Piece" type="Sprite2D"]
+centered = false
+hframes = 6
+script = ExtResource("1_hf0oo")
