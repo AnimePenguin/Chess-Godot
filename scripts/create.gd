@@ -4,7 +4,7 @@ const Piece = preload("res://scenes/piece.tscn")
 
 const DEFUALT_BOARD := [
 	["R", "N", "B", "Q", "K", "B", "N", "R"],
-	["P", "P", "P", "P", "P", "P", "P", "P"],
+	["P", "P", "p", "P", "P", "P", "P", "P"],
 	["",  "",  "",  "",  "",  "",  "",  "" ],
 	["",  "",  "",  "",  "",  "",  "",  "" ],
 	["",  "",  "",  "",  "",  "",  "",  "" ],
@@ -15,12 +15,7 @@ const DEFUALT_BOARD := [
 
 enum Symbols {P, N, B, R, Q, K}
 
-var tile_size
-
-func _init(game_tile_size):
-	tile_size = game_tile_size
-
-func create_piece(symbol: String, x: int, y: int) -> Piece:
+static func create_piece(symbol: String, x: int, y: int) -> Piece:
 	# If symbol is lower case, it's white
 	# If symbol is upper case, it's black
 	var color = "white" if symbol == symbol.to_lower() else "black"
@@ -28,12 +23,12 @@ func create_piece(symbol: String, x: int, y: int) -> Piece:
 	var piece = Piece.instantiate()
 	
 	piece.piece_id = Symbols[symbol.to_upper()]
-	piece.color = color
-	piece.position = Vector2(x, y) * tile_size
+	piece.team = color
+	piece.position = Vector2(x, y) * Global.TILE_SIZE
 	
 	return piece
 
-func create_board(from_board: Array) -> Dictionary:
+static func create_board(from_board: Array) -> Dictionary:
 	var board := [[], [], [], [], [], [], [], []]
 	var anchor_node := Node2D.new() # A node to keep the pieces
 	

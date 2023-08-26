@@ -3,26 +3,30 @@ class_name Piece
 
 const MOVE_TIME = 0.15
 
-@export_enum("white", "black") var color := "white"
-@export_range(0, 5) var piece_id: int
+enum {
+	PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING
+}
+
+var team := "white"
+var piece_id = PAWN
 
 @onready var game := get_node("/root/Game")
-@onready var tile_size = game.TILE_SIZE
+@onready var TILE_SIZE = Global.TILE_SIZE
 
 var piece_value: int
 var last_move_round: int # Used for pawn and king movement
 
-var pos: Vector2:
-	get: return position/tile_size
+var pos: Vector2i:
+	get: return position/TILE_SIZE
 
 func _ready():
-	texture = load("res://assets/%s.png" % color)
+	texture = load("res://assets/%s.png" % team)
 	frame = piece_id
 
 	piece_value = [1, 3, 3, 5, 9, 0][piece_id]
 
-func move_animation(new_pos: Vector2):
-	var new_position: Vector2 = new_pos * tile_size
+func move_animation(new_pos: Vector2i):
+	var new_position: Vector2 = new_pos * TILE_SIZE
 	
 	# So that the piece always appears on the top
 	z_index += 1
@@ -35,11 +39,11 @@ func move_animation(new_pos: Vector2):
 
 func get_moves(board: Array) -> Dictionary:
 	match piece_id:
-		0: return Moves.pawn(pos, board, game.round_num)
-		1: return Moves.basic(pos, board, Moves.L_SHAPE)
-		2: return Moves.line(pos, board, Moves.DIAGONAL)
-		3: return Moves.line(pos, board, Moves.ORTHOGONAL)
-		4: return Moves.line(pos, board, Moves.OCTO)
-		5: return Moves.king(pos, board)
+		PAWN: return Moves.pawn(pos, board, game.round_num)
+		KNIGHT: return Moves.basic(pos, board, Moves.L_SHAPE)
+		BISHOP: return Moves.line(pos, board, Moves.DIAGONAL)
+		ROOK: return Moves.line(pos, board, Moves.ORTHOGONAL)
+		QUEEN: return Moves.line(pos, board, Moves.OCTO)
+		KING: return Moves.king(pos, board)
 	
 	return {}

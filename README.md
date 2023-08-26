@@ -5,13 +5,12 @@ A Simple Chess Game made in Godot 4.0
 (The Default Position) <br/><br/>
 
 <img width="350" alt="image" src="https://github.com/AnimePenguin/Chess-Godot/assets/78182394/295a8b94-908c-4c0d-94d1-8745ffcd6e3a"><br/>
-(A Random Chess Match I found on the Internet) <br/><br/>
+(A Recreation of a chess match) <br/><br/>
 
 ## TODO:
-- Castling, Promoting, En Passant
 - Check for Illegal moves
 - Win / Lose
+- Drawable Arrows
 - UI / Start Menu / Settings
 - Opponent AI
-- Drawable Arrows
 - Multiplayer
