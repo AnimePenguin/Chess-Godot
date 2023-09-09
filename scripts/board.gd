@@ -1,7 +1,7 @@
 extends Sprite2D
 
 @onready var parent = get_parent()
-@onready var tile_size = parent.TILE_SIZE
+@onready var tile_size = Global.TILE_SIZE
 
 func _draw():
 	var moves = parent.moves

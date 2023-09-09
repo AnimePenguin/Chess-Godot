@@ -14,10 +14,9 @@ var turn := "white"
 
 var state: State = State.RUNNING
 
-func _ready():
-	set_window()
 
-	var values = Create.create_board(Create.DEFUALT_BOARD)
+func _ready():
+	var values = Create.create_board(Create.DEFAULT_BOARD)
 	board = values["board"]
 
 	values["node"].name = "Pieces"
@@ -38,16 +37,6 @@ func _unhandled_input(event):
 	if event.is_action_pressed("ui_accept"):
 		flip_board()
 
-func set_window():
-	var screen_size = DisplayServer.screen_get_size()
-
-	var lowest_dimension = screen_size[screen_size.min_axis_index()]
-	get_window().size = Vector2i.ONE * lowest_dimension * 0.75
-
-	DisplayServer.window_set_position(
-		DisplayServer.screen_get_position() +
-		(DisplayServer.screen_get_size() - DisplayServer.window_get_size())/2
-	)
 
 func flip_board():
 	rotate(PI)
@@ -60,11 +49,13 @@ func flip_board():
 	var movement = Vector2.ONE * TILE_SIZE * 8
 	position += -movement if position else movement
 
+
 func get_tile_pos() -> Vector2i:
 	var mouse_pos = get_local_mouse_position()
 	var pos = (mouse_pos / TILE_SIZE).floor()
 
 	return pos.clamp(Vector2i.ZERO, Vector2i(7, 7))
+
 
 func show_moves(pos: Vector2i):
 	if !board[pos.y][pos.x]:
@@ -82,6 +73,7 @@ func show_moves(pos: Vector2i):
 		moves = piece.get_moves(board)
 		selected_piece = piece
 
+
 func game_over_dialog(winner: String):
 	var dialog := $GameOver
 
@@ -94,6 +86,7 @@ func game_over_dialog(winner: String):
 
 	dialog.popup_centered()
 
+
 func promote_menu(new_pos: Vector2i):
 	var menu: Control = selected_piece.get_node("PromoteMenu")
 	var vbox: VBoxContainer = menu.get_node("VBox")
@@ -102,8 +95,9 @@ func promote_menu(new_pos: Vector2i):
 	
 	for i in [4,1,3,2]:
 		var piece_texture := AtlasTexture.new()
-		piece_texture.atlas = load("res://assets/%s.png" % turn)
-		piece_texture.region = Rect2(TILE_SIZE * i, 0, TILE_SIZE, TILE_SIZE)
+		piece_texture.atlas = selected_piece.texture
+		piece_texture.region.position = Vector2(TILE_SIZE * i, 0)
+		piece_texture.region.size = Vector2.ONE * TILE_SIZE
 
 		var option := Button.new()
 		option.icon = piece_texture
@@ -134,6 +128,7 @@ func promote_menu(new_pos: Vector2i):
 	for option in options.get_buttons():
 		option.queue_free()
 
+
 func move_piece(pos: Vector2i, piece: Piece):
 	board[piece.pos.y][piece.pos.x] = null
 	board[pos.y][pos.x] = piece
@@ -141,6 +136,7 @@ func move_piece(pos: Vector2i, piece: Piece):
 	piece.last_move_round = round_num
 
 	piece.move_animation(pos)
+
 
 func make_move(pos: Vector2i):
 	var move = moves[pos]

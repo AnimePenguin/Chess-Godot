@@ -1,9 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://cn4ssc2iv7ibb"]
+[gd_scene load_steps=4 format=3 uid="uid://cn4ssc2iv7ibb"]
 
+[ext_resource type="Texture2D" uid="uid://d26ytnwc3gbu6" path="res://assets/white.png" id="1_gxlmb"]
 [ext_resource type="Script" path="res://scripts/piece.gd" id="1_hf0oo"]
-[ext_resource type="Theme" uid="uid://b2sg3ddvvb1m6" path="res://assets/theme.tres" id="2_8q14j"]
+[ext_resource type="Theme" uid="uid://b7pg47dphncme" path="res://assets/promote_menu.tres" id="3_0ebgg"]
 
 [node name="Piece" type="Sprite2D"]
+texture = ExtResource("1_gxlmb")
 centered = false
 hframes = 6
 script = ExtResource("1_hf0oo")
@@ -15,7 +17,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_top = 2.0
 offset_bottom = 2.0
-theme = ExtResource("2_8q14j")
+theme = ExtResource("3_0ebgg")
 
 [node name="VBox" type="VBoxContainer" parent="PromoteMenu"]
 layout_mode = 0

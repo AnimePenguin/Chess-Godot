@@ -9,6 +9,7 @@ const OCTO = ORTHOGONAL + DIAGONAL
 const L_SHAPE = [[ 2,  1], [ 1,  2], [-1,  2], [-2,  1], 
 				 [-2, -1], [-1, -2], [ 1, -2], [ 2, -1]]
 
+
 static func not_in_range(x, y): return x < 0 or x > 7 or y < 0 or y > 7
 
 static func new_move() -> Dictionary:
@@ -19,6 +20,7 @@ static func new_capture(take_piece) -> Dictionary:
 
 static func new_castle(side) -> Dictionary:
 	return {"type": CASTLE, "side": side}
+
 
 static func basic(pos: Vector2i, board: Array, directions: Array) -> Dictionary:
 	var moves := {}
@@ -40,6 +42,7 @@ static func basic(pos: Vector2i, board: Array, directions: Array) -> Dictionary:
 			moves[Vector2i(x, y)] = new_capture(tile)
 
 	return moves
+
 
 static func line(pos: Vector2i, board: Array, directions: Array) -> Dictionary:
 	var moves := {}
@@ -66,6 +69,7 @@ static func line(pos: Vector2i, board: Array, directions: Array) -> Dictionary:
 			break
 
 	return moves
+
 
 static func pawn(pos: Vector2i, board: Array, round_num: int) -> Dictionary:
 	var moves := {}
@@ -123,6 +127,7 @@ static func pawn(pos: Vector2i, board: Array, round_num: int) -> Dictionary:
 			moves[Vector2i(pos.x + side, pos.y + move_dir)] = new_capture(tile)
 
 	return moves
+
 
 static func king(pos: Vector2i, board: Array) -> Dictionary:
 	var moves := {}

@@ -14,3 +14,9 @@ A Simple Chess Game made in Godot 4.0
 - UI / Start Menu / Settings
 - Opponent AI
 - Multiplayer
+
+---
+
+Font by [Caffinate](https://caffinate.itch.io/abaddon)
+
+Everything else is under the MIT License

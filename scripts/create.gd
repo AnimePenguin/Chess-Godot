@@ -2,7 +2,7 @@ class_name Create
 
 const Piece = preload("res://scenes/piece.tscn")
 
-const DEFUALT_BOARD := [
+const DEFAULT_BOARD := [
 	["R", "N", "B", "Q", "K", "B", "N", "R"],
 	["P", "P", "P", "P", "P", "P", "P", "P"],
 	["",  "",  "",  "",  "",  "",  "",  "" ],
@@ -14,6 +14,7 @@ const DEFUALT_BOARD := [
 ]
 
 enum Symbols {P, N, B, R, Q, K}
+
 
 static func create_piece(symbol: String, x: int, y: int) -> Piece:
 	# If symbol is lower case, it's white
@@ -38,7 +39,7 @@ static func create_board(from_board: Array) -> Dictionary:
 				board[y].append(null)
 				continue
 				
-			var piece = create_piece(DEFUALT_BOARD[y][x], x, y)
+			var piece = create_piece(from_board[y][x], x, y)
 			board[y].append(piece)
 			anchor_node.add_child(piece)
 	

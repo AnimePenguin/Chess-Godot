@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://ct5gidpxqb75t"]
+
+[ext_resource type="Script" path="res://scripts/falling_piece.gd" id="1_1yvsh"]
+[ext_resource type="Texture2D" uid="uid://d26ytnwc3gbu6" path="res://assets/white.png" id="2_grenw"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_j7sot"]
+rough = true
+bounce = 0.2
+absorbent = true
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_74jbe"]
+radius = 15.0
+
+[node name="FallingPiece" type="RigidBody2D"]
+mass = 0.1
+inertia = 1.0
+physics_material_override = SubResource("PhysicsMaterial_j7sot")
+gravity_scale = 0.2
+script = ExtResource("1_1yvsh")
+
+[node name="CollisionShape" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_74jbe")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_grenw")
+hframes = 6
