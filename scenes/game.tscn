@@ -13,7 +13,7 @@ centered = false
 script = ExtResource("3_mjhun")
 
 [node name="GameOver" type="AcceptDialog" parent="."]
-title = "Game Over"
+title = "Result"
 initial_position = 4
 size = Vector2i(108, 100)
 unresizable = true

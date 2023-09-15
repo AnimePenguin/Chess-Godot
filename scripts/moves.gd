@@ -9,7 +9,6 @@ const OCTO = ORTHOGONAL + DIAGONAL
 const L_SHAPE = [[ 2,  1], [ 1,  2], [-1,  2], [-2,  1], 
 				 [-2, -1], [-1, -2], [ 1, -2], [ 2, -1]]
 
-
 static func not_in_range(x, y): return x < 0 or x > 7 or y < 0 or y > 7
 
 static func new_move() -> Dictionary:
@@ -20,7 +19,6 @@ static func new_capture(take_piece) -> Dictionary:
 
 static func new_castle(side) -> Dictionary:
 	return {"type": CASTLE, "side": side}
-
 
 static func basic(pos: Vector2i, board: Array, directions: Array) -> Dictionary:
 	var moves := {}
@@ -43,14 +41,13 @@ static func basic(pos: Vector2i, board: Array, directions: Array) -> Dictionary:
 
 	return moves
 
-
 static func line(pos: Vector2i, board: Array, directions: Array) -> Dictionary:
 	var moves := {}
 	
 	var color = board[pos.y][pos.x].team
 	
 	for dir in directions:
-		for i in range(1, 10):
+		for i in range(1, 9):
 			var x = pos.x + (dir[0] * i)
 			var y = pos.y + (dir[1] * i)
 
@@ -69,7 +66,6 @@ static func line(pos: Vector2i, board: Array, directions: Array) -> Dictionary:
 			break
 
 	return moves
-
 
 static func pawn(pos: Vector2i, board: Array, round_num: int) -> Dictionary:
 	var moves := {}
@@ -128,7 +124,6 @@ static func pawn(pos: Vector2i, board: Array, round_num: int) -> Dictionary:
 
 	return moves
 
-
 static func king(pos: Vector2i, board: Array) -> Dictionary:
 	var moves := {}
 	
@@ -150,7 +145,7 @@ static func king(pos: Vector2i, board: Array) -> Dictionary:
 					
 				can_castle = true
 			elif piece.piece_id == Piece.ROOK:
-				if piece.last_move_round:
+				if piece.last_move_round or piece.team != king_piece.team:
 					can_castle = false
 					
 				rook_pos = piece.pos.x

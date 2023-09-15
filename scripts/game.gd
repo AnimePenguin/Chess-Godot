@@ -14,7 +14,6 @@ var turn := "white"
 
 var state: State = State.RUNNING
 
-
 func _ready():
 	var values = Create.create_board(Create.DEFAULT_BOARD)
 	board = values["board"]
@@ -37,7 +36,6 @@ func _unhandled_input(event):
 	if event.is_action_pressed("ui_accept"):
 		flip_board()
 
-
 func flip_board():
 	rotate(PI)
 
@@ -49,19 +47,72 @@ func flip_board():
 	var movement = Vector2.ONE * TILE_SIZE * 8
 	position += -movement if position else movement
 
-
 func get_tile_pos() -> Vector2i:
 	var mouse_pos = get_local_mouse_position()
 	var pos = (mouse_pos / TILE_SIZE).floor()
 
 	return pos.clamp(Vector2i.ZERO, Vector2i(7, 7))
 
+func get_legal_moves(piece: Piece) -> Dictionary:
+	var piece_moves = piece.get_moves(board)
+	
+	var original_pos := piece.pos
+	
+	for move in piece_moves.keys():
+		var take_piece: Piece = null
+
+		if piece_moves[move].type == Moves.CAPTURE:
+			take_piece = piece_moves[move].take_piece
+			board[take_piece.pos.y][take_piece.pos.x] = null
+
+		board[piece.pos.y][piece.pos.x] = null
+		board[move.y][move.x] = piece
+		piece.pos = move
+
+		if is_in_check(): piece_moves.erase(move)
+		
+		piece.pos = original_pos
+		board[move.y][move.x] = null
+		board[piece.pos.y][piece.pos.x] = piece
+
+		if take_piece:
+			board[take_piece.pos.y][take_piece.pos.x] = take_piece
+	
+	return piece_moves
+
+func no_legal_moves() -> bool:
+	for row in board:
+		for piece in row:
+			if !piece or piece.team != turn:
+				continue
+			
+			if get_legal_moves(piece).size():
+				return false
+			
+	return true
+
+func is_in_check() -> bool:
+	for row in board:
+		for piece in row:
+			if !piece or piece.team == turn:
+				continue
+			
+			var piece_moves: Dictionary = piece.get_moves(board)
+			
+			for move in piece_moves.values():
+				if move.type != Moves.CAPTURE:
+					continue
+				
+				if move.take_piece.piece_id == Piece.KING:
+					return true
+	
+	return false
 
 func show_moves(pos: Vector2i):
 	if !board[pos.y][pos.x]:
 		return
 
-	var piece = board[pos.y][pos.x]
+	var piece: Piece = board[pos.y][pos.x]
 
 	if piece.team != turn:
 		return
@@ -69,15 +120,15 @@ func show_moves(pos: Vector2i):
 	if selected_piece == piece:
 		moves.clear()
 		selected_piece = null
-	else:
-		moves = piece.get_moves(board)
-		selected_piece = piece
+		return
 
+	moves = get_legal_moves(piece)
+	selected_piece = piece
 
-func game_over_dialog(winner: String):
+func game_over_dialog(text: String):
 	var dialog := $GameOver
 
-	dialog.dialog_text = winner.capitalize() + " Won the Game!"
+	dialog.dialog_text = text
 
 	dialog.add_cancel_button("Quit")
 
@@ -86,57 +137,14 @@ func game_over_dialog(winner: String):
 
 	dialog.popup_centered()
 
-
-func promote_menu(new_pos: Vector2i):
-	var menu: Control = selected_piece.get_node("PromoteMenu")
-	var vbox: VBoxContainer = menu.get_node("VBox")
-	
-	var options := ButtonGroup.new()
-	
-	for i in [4,1,3,2]:
-		var piece_texture := AtlasTexture.new()
-		piece_texture.atlas = selected_piece.texture
-		piece_texture.region.position = Vector2(TILE_SIZE * i, 0)
-		piece_texture.region.size = Vector2.ONE * TILE_SIZE
-
-		var option := Button.new()
-		option.icon = piece_texture
-		option.toggle_mode = true
-		option.button_group = options
-		option.set_meta("id", i)
-
-		vbox.add_child(option)
-
-	if selected_piece.team == "white":
-		menu.position.x = new_pos.x * TILE_SIZE
-	else:
-		menu.position.x = (7 - new_pos.x) * TILE_SIZE
-
-	if new_pos.x == 7:
-		menu.position.x -= TILE_SIZE * 0.5
-	
-	menu.show()
-	
-	await options.pressed
-	
-	menu.hide()
-	
-	var new_piece_id = options.get_pressed_button().get_meta("id")
-	selected_piece.frame = new_piece_id
-	selected_piece.piece_id = new_piece_id
-	
-	for option in options.get_buttons():
-		option.queue_free()
-
-
 func move_piece(pos: Vector2i, piece: Piece):
 	board[piece.pos.y][piece.pos.x] = null
 	board[pos.y][pos.x] = piece
 	
 	piece.last_move_round = round_num
-
+	
+	piece.pos = pos
 	piece.move_animation(pos)
-
 
 func make_move(pos: Vector2i):
 	var move = moves[pos]
@@ -148,23 +156,18 @@ func make_move(pos: Vector2i):
 
 	if move.type == Moves.CAPTURE:
 		var timer = get_tree().create_timer(Piece.MOVE_TIME)
-
-		# TODO: IMPLEMENT PROPER WIN/LOSS
-		if move.take_piece.piece_id == Piece.KING:
-			state = State.ENDED
-			game_over_dialog(turn)
-
 		timer.timeout.connect(move.take_piece.queue_free)
-	elif move.type == Moves.CASTLE:
+		
+	elif move.type == Moves.CASTLE and not is_in_check():
 		var rook: Piece
-		var x: int
+		var x := pos.x
 		
 		if move.side == "long":
 			rook = board[pos.y][0]
-			x = pos.x + 1
+			x += 1
 		else:
 			rook = board[pos.y][7]
-			x = pos.x - 1
+			x -= 1
 			
 		move_piece(Vector2i(x, pos.y), rook)
 	
@@ -173,9 +176,20 @@ func make_move(pos: Vector2i):
 		
 		state = State.PROMOTING
 		
-		await promote_menu(pos)
+		await selected_piece.promote_menu(pos)
 		
 		state = State.RUNNING
 
 	turn = "black" if turn == "white" else "white"
 	selected_piece = null
+	
+	if no_legal_moves():
+		state = State.ENDED
+		
+		if not is_in_check():
+			game_over_dialog("Stalemate!")
+		
+		game_over_dialog(turn.capitalize() + " is Checkmated!")
+		
+	if is_in_check():
+		print("Check!")

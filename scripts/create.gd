@@ -5,27 +5,37 @@ const Piece = preload("res://scenes/piece.tscn")
 const DEFAULT_BOARD := [
 	["R", "N", "B", "Q", "K", "B", "N", "R"],
 	["P", "P", "P", "P", "P", "P", "P", "P"],
-	["",  "",  "",  "",  "",  "",  "",  "" ],
-	["",  "",  "",  "",  "",  "",  "",  "" ],
-	["",  "",  "",  "",  "",  "",  "",  "" ],
-	["",  "",  "",  "",  "",  "",  "",  "" ],
+	["" , "" , "" , "" , "" , "" , "" , "" ],
+	["" , "" , "" , "" , "" , "" , "" , "" ],
+	["" , "" , "" , "" , "" , "" , "" , "" ],
+	["" , "" , "" , "" , "" , "" , "" , "" ],
 	["p", "p", "p", "p", "p", "p", "p", "p"],
 	["r", "n", "b", "q", "k", "b", "n", "r"],
 ]
 
+const CUSTOM_BOARD := [
+	["", "", "", "", "", "", "", ""],
+	["", "", "", "", "", "", "", ""],
+	["", "", "", "", "", "", "", ""],
+	["", "", "", "", "", "", "", ""],
+	["", "", "", "", "", "", "", ""],
+	["", "", "", "", "", "", "", ""],
+	["", "", "", "", "", "", "", ""],
+	["", "", "", "", "", "", "", ""],
+]
+
 enum Symbols {P, N, B, R, Q, K}
 
-
-static func create_piece(symbol: String, x: int, y: int) -> Piece:
+static func create_piece(symbol: String, pos: Vector2i) -> Piece:
 	# If symbol is lower case, it's white
 	# If symbol is upper case, it's black
-	var color = "white" if symbol == symbol.to_lower() else "black"
+	var color := "white" if symbol == symbol.to_lower() else "black"
 	
-	var piece = Piece.instantiate()
+	var piece := Piece.instantiate()
 	
 	piece.piece_id = Symbols[symbol.to_upper()]
 	piece.team = color
-	piece.position = Vector2(x, y) * Global.TILE_SIZE
+	piece.pos = pos
 	
 	return piece
 
@@ -39,7 +49,7 @@ static func create_board(from_board: Array) -> Dictionary:
 				board[y].append(null)
 				continue
 				
-			var piece = create_piece(from_board[y][x], x, y)
+			var piece = create_piece(from_board[y][x], Vector2i(x, y))
 			board[y].append(piece)
 			anchor_node.add_child(piece)
 	

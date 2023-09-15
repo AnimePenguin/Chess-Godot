@@ -9,6 +9,7 @@ bounce = 0.2
 absorbent = true
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_74jbe"]
+resource_local_to_scene = true
 radius = 15.0
 
 [node name="FallingPiece" type="RigidBody2D"]

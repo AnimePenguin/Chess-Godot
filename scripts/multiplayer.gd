@@ -3,7 +3,6 @@ class_name Multiplayer
 
 const PORT = 26355
 
-
 static func get_chr_map() -> Array:
 	var map := []
 	
@@ -17,11 +16,12 @@ static func get_chr_map() -> Array:
 
 static func encode_ip(ip: String) -> String:
 	var map := get_chr_map()
+	var base := len(map)
 	
 	var ip_octets := Array(ip.split(".")).map(func(x): return int(x))
 	
-	var octet_mask := ip_octets.map(func(x): return floor(x / 64))
-	var masked_octets := ip_octets.map(func(x): return x % 64)
+	var octet_mask := ip_octets.map(func(x): return floor(x / base))
+	var masked_octets := ip_octets.map(func(x): return x % base)
 	
 	var code := ""
 	
@@ -31,25 +31,26 @@ static func encode_ip(ip: String) -> String:
 	var mask_as_number := int("".join(octet_mask))
 	
 	while mask_as_number >= 1:
-		code += str(map[mask_as_number % 64])
-		mask_as_number = floor(mask_as_number / 64)
+		code += str(map[mask_as_number % base])
+		mask_as_number = floor(mask_as_number / base)
 
 	return code
 
 static func decode_ip(code: String) -> String:
 	var map := get_chr_map()
+	var base := len(map)
 	
 	var mask_part := code.substr(4)
 	var mask_as_number := 0
 	
 	for i in range(len(mask_part)):
-		mask_as_number += map.find(mask_part[i]) * (64**i)
+		mask_as_number += map.find(mask_part[i]) * (base**i)
 	
 	var octet_mask := str(mask_as_number).lpad(4, "0").split()
 	
 	var octets := []
 	for i in range(4):
-		octets.append(map.find(code[i]) + 64 * int(octet_mask[i]))
+		octets.append(map.find(code[i]) + base * int(octet_mask[i]))
 
 	return ".".join(octets)
 

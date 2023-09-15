@@ -8,10 +8,8 @@ A Simple Chess Game made in Godot 4.0
 (A Recreation of a chess match) <br/><br/>
 
 ## TODO:
-- Check for Illegal moves
-- Win / Lose
 - Drawable Arrows
-- UI / Start Menu / Settings
+- UI / Settings
 - Opponent AI
 - Multiplayer
 
